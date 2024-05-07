@@ -34,6 +34,7 @@ class TicketEditView(PermissionRequiredMixin, View):
     permission_required = 'tickets.change_ticket'
     # ...更多视图方法，如get, post等...
 
+@login_required
 def ticket_edit(request, pk):
     ticket = get_object_or_404(Ticket, pk=pk)
     if request.method == 'POST':
