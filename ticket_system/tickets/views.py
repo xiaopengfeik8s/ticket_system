@@ -35,11 +35,15 @@ def ticket_list(request):
     paginator = Paginator(tickets, 10)  # 每页显示10个工单
     page = request.GET.get('page')
     tickets = paginator.get_page(page)
-    
+
+    archived_query = request.GET.get('archived')
+    if archived_query is not None:
+        tickets = tickets.filter(archived=archived_query == 'True')
+       
 # 获取所有标签的独特列表
     labels = Ticket.objects.values_list('labels', flat=True).distinct()
     
-    return render(request, 'tickets/ticket_list.html', {'tickets': tickets, 'labels': labels})
+    return render(request, 'tickets/ticket_list.html', {'tickets': tickets})
 
 
 @login_required
