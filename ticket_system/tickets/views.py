@@ -113,3 +113,16 @@ def ticket_archive(request, pk):
     ticket.archived = True
     ticket.save()
     return redirect('ticket_list')  # 或者重定向到其他页面，如工单详情页
+
+def dashboard(request):
+    total_tickets = Ticket.objects.count()
+    status_new = Ticket.objects.filter(status='new').count()
+    status_in_progress = Ticket.objects.filter(status='in_progress').count()
+    # 更多状态和统计数据...
+
+    return render(request, 'tickets/dashboard.html', {
+        'total_tickets': total_tickets,
+        'status_new': status_new,
+        'status_in_progress': status_in_progress,
+        # 更多状态和统计数据...
+    })

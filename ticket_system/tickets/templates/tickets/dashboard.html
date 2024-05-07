@@ -1,0 +1,14 @@
+<!-- tickets/templates/tickets/dashboard.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Dashboard</h2>
+
+<div>
+    <p>总工单数量: {{ total_tickets }}</p>
+    <p>新工单数量: {{ status_new }}</p>
+    <p>进行中工单数量: {{ status_in_progress }}</p>
+    <!-- 更多状态和统计数据... -->
+</div>
+
+{% endblock %}
