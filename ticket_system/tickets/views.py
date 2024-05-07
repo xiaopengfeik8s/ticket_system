@@ -9,7 +9,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from .forms import TicketForm
 from django.views.generic import View
-
+from django.shortcuts import get_object_or_404, redirect
+import sys
 
 
 def ticket_list(request):
@@ -47,4 +48,17 @@ def ticket_edit(request, pk):
 def ticket_delete(request, pk):
     ticket = get_object_or_404(Ticket, pk=pk)
     ticket.delete()
+    return redirect('ticket_list')
+
+
+
+   
+
+@login_required
+def ticket_status_update(request, pk, status):
+    ticket = get_object_or_404(Ticket, pk=pk)
+    ticket.status = status
+    ticket.save()
+    # 在这里可以加上发送通知的代码
+    print(f'Notice: Ticket {ticket.pk} status has been updated to {ticket.status}.', file=sys.stderr)
     return redirect('ticket_list')
