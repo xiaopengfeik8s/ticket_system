@@ -1,4 +1,41 @@
 <!-- tickets/templates/tickets/ticket_detail.html -->
+<script>
+    // 当文档加载完成后执行
+    document.addEventListener('DOMContentLoaded', function() {
+      const commentForm = document.getElementById('comment-form');  // 评论表单的id
+      commentForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch("{% url 'ticket_comment' ticket.pk %}", {  // 替换'ticket_comment'为您views中的视图名称
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken'),  // 从表单中获取CSRF token
+          },
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          // 处理返回的数据，更新评论列表
+          if (data.success) {
+            const commentsContainer = document.getElementById('comments-container'); // 评论列表的容器id
+    
+            // 创建新的评论元素
+            const newComment = document.createElement('div');
+            newComment.innerHTML = `
+              <p>${data.author}: ${data.text}</p> 
+            `;
+            // 将新评论添加到评论列表中
+            commentsContainer.appendChild(newComment);
+            // 清空评论输入框
+            commentForm.reset();
+          } else {
+            console.error('Failed to submit comment:', data.error);
+          }
+        })
+        .catch(err => console.error(err));
+      });
+    });
+</script>
 <h1>工单详情</h1>
 
 <p><strong>标题:</strong> {{ ticket.title }}</p>

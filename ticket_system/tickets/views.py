@@ -19,6 +19,8 @@ from .forms import CommentForm
 from .models import Ticket, Comment
 from django.db.models import Count
 from django.db.models import Count, F, Avg, DurationField, ExpressionWrapper
+import json
+from django.http import JsonResponse
 
 @login_required
 def ticket_list(request):
@@ -158,3 +160,24 @@ def dashboard(request):
         # 更多上下文信息
     }
     return render(request, 'tickets/dashboard.html', context)
+
+@login_required
+def ticket_comment(request, pk):
+    if request.method == 'POST' and request.is_ajax():
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.ticket = get_object_or_404(Ticket, pk=pk)
+            comment.author = request.user
+            comment.save()
+            return JsonResponse({
+              'success': True,
+              'author': comment.author.username,
+              'text': comment.text,
+            })
+        else:
+            return JsonResponse({
+              'success': False,
+              'error': 'Invalid form submission.',
+            })
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
