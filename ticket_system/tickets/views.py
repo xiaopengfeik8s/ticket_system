@@ -12,14 +12,40 @@ from django.views.generic import View
 from django.shortcuts import get_object_or_404, redirect
 import sys
 
+from django.core.paginator import Paginator
+from .forms import CommentForm
+
+@login_required
 def ticket_list(request):
-    tickets = Ticket.objects.all()
-    return render(request, 'tickets/ticket_list.html', {'tickets': tickets})
+    tickets_list = Ticket.objects.all()
+    paginator = Paginator(tickets_list, 10)  # 每页显示10个工单
+
+    page = request.GET.get('page')
+    tickets = paginator.get_page(page)
     
+    return render(request, 'tickets/ticket_list.html', {'tickets': tickets})
+
+
+
 @login_required
 def ticket_detail(request, pk):
     ticket = get_object_or_404(Ticket, pk=pk)
-    return render(request, 'tickets/ticket_detail.html', {'ticket': ticket})
+    if request.method == 'POST':
+        comment_form = CommentForm(data=request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.ticket = ticket
+            comment.author = request.user
+            comment.save()
+            return redirect(request.path)
+    else:
+        comment_form = CommentForm()
+
+    return render(request, 'tickets/ticket_detail.html', {
+        'ticket': ticket,
+        'comment_form': comment_form,
+        'comments': ticket.comments.all()
+    })
 
 @login_required
 def ticket_create(request):

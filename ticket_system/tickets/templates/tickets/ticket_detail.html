@@ -8,6 +8,16 @@
 <p><strong>标签:</strong> {{ ticket.labels }}</p>
 <p><strong>创建时间:</strong> {{ ticket.created_at }}</p>
 <p><strong>更新时间:</strong> {{ ticket.updated_at }}</p>
+{% for comment in comments %}
+    <div class="comment">
+        <p>{{ comment.author }} said: {{ comment.text }}</p>
+    </div>
+{% endfor %}
 
+<form method="post">
+    {% csrf_token %}
+    {{ comment_form.as_p }}
+    <button type="submit">添加评论</button>
+</form>
 <a href="{% url 'ticket_edit' pk=ticket.pk %}">编辑</a> |
 <a href="{% url 'ticket_delete' pk=ticket.pk %}">删除</a>
