@@ -142,9 +142,17 @@ def dashboard(request):
     status_in_progress = Ticket.objects.filter(status='in_progress').count()
     # 更多状态和统计数据...
 
+    priority_counts = Ticket.objects.values('priority').annotate(total=Count('id'))
+
+    avg_resolve_time = Ticket.objects.filter(status='resolved').annotate(
+        resolve_time=ExpressionWrapper(F('resolved_date') - F('created'), output_field=DurationField())
+    ).aggregate(average=Avg('resolve_time'))
+    
     return render(request, 'tickets/dashboard.html', {
         'total_tickets': total_tickets,
         'status_new': status_new,
         'status_in_progress': status_in_progress,
-        # 更多状态和统计数据...
+        'priority_counts': priority_counts,
+        'avg_resolve_time': avg_resolve_time['average'],
+        # ...其他统计数据...
     })
