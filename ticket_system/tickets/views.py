@@ -56,9 +56,12 @@ def ticket_delete(request, pk):
 
 @login_required
 def ticket_status_update(request, pk, status):
+    print("Entering ticket_status_update view function.", file=sys.stderr)
     ticket = get_object_or_404(Ticket, pk=pk)
+    print(f"Ticket with pk={pk} fetched successfully.", file=sys.stderr)
     ticket.status = status
     ticket.save()
     # 在这里可以加上发送通知的代码
     print(f'Notice: Ticket {ticket.pk} status has been updated to {ticket.status}.', file=sys.stderr)
+    print("Redirecting to ticket_list.", file=sys.stderr)
     return redirect('ticket_list')
