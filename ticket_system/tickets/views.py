@@ -14,6 +14,7 @@ import sys
 
 from django.core.paginator import Paginator
 from .forms import CommentForm
+from django.contrib.auth.models import User
 
 @login_required
 def ticket_list(request):
@@ -24,16 +25,18 @@ def ticket_list(request):
     if status_query:
         tickets = tickets.filter(status=status_query)
     if assigned_query:
-        tickets = tickets.filter(assigned_to=User.objects.get(username=assigned_query))
+        try:
+            user = User.objects.get(username=assigned_query)
+            tickets = tickets.filter(assigned_to=user)
+        except User.DoesNotExist:
+            # 如果没有找到用户，则传回空的查询集
+            tickets = Ticket.objects.none()
 
-    tickets_list = Ticket.objects.all()
-    paginator = Paginator(tickets_list, 10)  # 每页显示10个工单
-
+    paginator = Paginator(tickets, 10)  # 每页显示10个工单
     page = request.GET.get('page')
     tickets = paginator.get_page(page)
     
     return render(request, 'tickets/ticket_list.html', {'tickets': tickets})
-
 
 
 @login_required
