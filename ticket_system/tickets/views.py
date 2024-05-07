@@ -36,7 +36,10 @@ def ticket_list(request):
     page = request.GET.get('page')
     tickets = paginator.get_page(page)
     
-    return render(request, 'tickets/ticket_list.html', {'tickets': tickets})
+# 获取所有标签的独特列表
+    labels = Ticket.objects.values_list('labels', flat=True).distinct()
+    
+    return render(request, 'tickets/ticket_list.html', {'tickets': tickets, 'labels': labels})
 
 
 @login_required
