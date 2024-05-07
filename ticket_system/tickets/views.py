@@ -17,6 +17,8 @@ from .forms import CommentForm
 from django.contrib.auth.models import User
 from .forms import CommentForm
 from .models import Ticket, Comment
+from django.db.models import Count
+from django.db.models import Count, F, Avg, DurationField, ExpressionWrapper
 
 @login_required
 def ticket_list(request):
@@ -136,23 +138,23 @@ def ticket_archive(request, pk):
     ticket.save()
     return redirect('ticket_list')  # 或者重定向到其他页面，如工单详情页
 
+@login_required
 def dashboard(request):
     total_tickets = Ticket.objects.count()
     status_new = Ticket.objects.filter(status='new').count()
     status_in_progress = Ticket.objects.filter(status='in_progress').count()
-    # 更多状态和统计数据...
-
-    priority_counts = Ticket.objects.values('priority').annotate(total=Count('id'))
-
+    status_resolved = Ticket.objects.filter(status='resolved').count()  # 假设 'resolved' 是解决状态
     avg_resolve_time = Ticket.objects.filter(status='resolved').annotate(
-        resolve_time=ExpressionWrapper(F('resolved_date') - F('created'), output_field=DurationField())
+        resolve_time=ExpressionWrapper(F('updated_at') - F('created_at'), 
+        output_field=DurationField())
     ).aggregate(average=Avg('resolve_time'))
     
-    return render(request, 'tickets/dashboard.html', {
+    context = {
         'total_tickets': total_tickets,
         'status_new': status_new,
         'status_in_progress': status_in_progress,
-        'priority_counts': priority_counts,
-        'avg_resolve_time': avg_resolve_time['average'],
-        # ...其他统计数据...
-    })
+        'status_resolved': status_resolved,
+        'avg_resolve_time': avg_resolve_time['average'] if avg_resolve_time['average'] is not None else 'N/A',
+        # 更多上下文信息
+    }
+    return render(request, 'tickets/dashboard.html', context)

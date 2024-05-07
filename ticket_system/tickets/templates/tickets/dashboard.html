@@ -8,7 +8,9 @@
     <p>总工单数量: {{ total_tickets }}</p>
     <p>新工单数量: {{ status_new }}</p>
     <p>进行中工单数量: {{ status_in_progress }}</p>
-    <!-- 更多状态和统计数据... -->
+    <!-- 添加更多状态和统计数据的显示 -->
+    <p>已解决工单数量: {{ status_resolved }}</p>
+    <p>平均解决时间: {{ avg_resolve_time }}</p>
 </div>
 
 {% endblock %}
