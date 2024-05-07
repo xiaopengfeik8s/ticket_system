@@ -20,30 +20,25 @@ from django.contrib.auth.models import User
 def ticket_list(request):
     status_query = request.GET.get('status')
     assigned_query = request.GET.get('assigned_to')
+    archived_query = request.GET.get('archived')
     
     tickets = Ticket.objects.all()
+    
     if status_query:
         tickets = tickets.filter(status=status_query)
     if assigned_query:
-        try:
-            user = User.objects.get(username=assigned_query)
-            tickets = tickets.filter(assigned_to=user)
-        except User.DoesNotExist:
-            # 如果没有找到用户，则传回空的查询集
-            tickets = Ticket.objects.none()
-
-    paginator = Paginator(tickets, 10)  # 每页显示10个工单
-    page = request.GET.get('page')
-    tickets = paginator.get_page(page)
-
-    archived_query = request.GET.get('archived')
+        tickets = tickets.filter(assigned_to__username=assigned_query)
     if archived_query is not None:
         tickets = tickets.filter(archived=archived_query == 'True')
-       
-# 获取所有标签的独特列表
+    
+    # Paginate after all filters are applied
+    paginator = Paginator(tickets, 10)  # Show 10 tickets per page
+    page = request.GET.get('page')
+    tickets_page = paginator.get_page(page)
+
     labels = Ticket.objects.values_list('labels', flat=True).distinct()
     
-    return render(request, 'tickets/ticket_list.html', {'tickets': tickets})
+    return render(request, 'tickets/ticket_list.html', {'tickets': tickets_page, 'labels': labels})
 
 
 @login_required
@@ -111,3 +106,10 @@ def ticket_status_update(request, pk, status):
     print(f'Notice: Ticket {ticket.pk} status has been updated to {ticket.status}.', file=sys.stderr)
     print("Redirecting to ticket_list.", file=sys.stderr)
     return redirect('ticket_list')
+
+@login_required
+def ticket_archive(request, pk):
+    ticket = get_object_or_404(Ticket, pk=pk)
+    ticket.archived = True
+    ticket.save()
+    return redirect('ticket_list')  # 或者重定向到其他页面，如工单详情页
