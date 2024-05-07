@@ -1,7 +1,27 @@
 <!-- tickets/templates/tickets/ticket_list.html -->
 <h1>工单列表</h1>
-<ul>
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Status</th>
+        <th>Priority</th>
+        <th>Labels</th>
+        <th>Actions</th>
+    </tr>
     {% for ticket in tickets %}
-    <li>{{ ticket.title }} - {{ ticket.get_status_display }}</li>
+    <tr>
+        <td>{{ ticket.title }}</td>
+        <td>{{ ticket.get_status_display }}</td>
+        <td>{{ ticket.get_priority_display }}</td>
+        <td>{{ ticket.labels }}</td>
+        <td>
+            <a href="{% url 'ticket_edit' pk=ticket.pk %}">Edit</a>
+            <a href="{% url 'ticket_delete' pk=ticket.pk %}">Delete</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="5">No tickets found.</td>
+    </tr>
     {% endfor %}
-</ul>
+</table>
