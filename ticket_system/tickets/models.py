@@ -23,7 +23,7 @@ class Ticket(models.Model):
         ('duplicate', 'Duplicate'),
         ('invalid', 'Invalid'),
     ]
-    
+    assigned_to = models.ForeignKey(User, related_name='assigned_tickets', on_delete=models.SET_NULL, null=True, blank=True)
     priority = models.CharField(max_length=6, choices=PRIORITY_CHOICES, default='medium')
     labels = models.CharField(max_length=20, choices=LABEL_CHOICES, default='bug')
     title = models.CharField(max_length=255)
