@@ -1,0 +1,7 @@
+<!-- tickets/templates/tickets/ticket_list.html -->
+<h1>工单列表</h1>
+<ul>
+    {% for ticket in tickets %}
+    <li>{{ ticket.title }} - {{ ticket.get_status_display }}</li>
+    {% endfor %}
+</ul>
