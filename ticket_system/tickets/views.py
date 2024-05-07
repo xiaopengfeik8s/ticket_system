@@ -16,6 +16,7 @@ from django.core.paginator import Paginator
 from .forms import CommentForm
 from django.contrib.auth.models import User
 from .forms import CommentForm
+from .models import Ticket, Comment
 
 @login_required
 def ticket_list(request):
