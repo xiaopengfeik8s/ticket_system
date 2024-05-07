@@ -1,0 +1,13 @@
+<!-- tickets/templates/tickets/ticket_detail.html -->
+<h1>工单详情</h1>
+
+<p><strong>标题:</strong> {{ ticket.title }}</p>
+<p><strong>描述:</strong> {{ ticket.description }}</p>
+<p><strong>状态:</strong> {{ ticket.get_status_display }}</p>
+<p><strong>优先级:</strong> {{ ticket.get_priority_display }}</p>
+<p><strong>标签:</strong> {{ ticket.labels }}</p>
+<p><strong>创建时间:</strong> {{ ticket.created_at }}</p>
+<p><strong>更新时间:</strong> {{ ticket.updated_at }}</p>
+
+<a href="{% url 'ticket_edit' pk=ticket.pk %}">编辑</a> |
+<a href="{% url 'ticket_delete' pk=ticket.pk %}">删除</a>
