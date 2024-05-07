@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Ticket System{% endblock %}</title>
+    {% block stylesheet %}
+    <!-- Include CSS files here -->
+    {% endblock %}
+</head>
+<body>
+    <header>
+        <!-- Header content goes here -->
+    </header>
+
+    <nav>
+        <!-- Navigation bar content goes here -->
+    </nav>
+
+    <main>
+        {% block content %}
+        <!-- Page content gets overridden here -->
+        {% endblock %}
+    </main>
+
+    <footer>
+        <!-- Footer content goes here -->
+    </footer>
+
+    {% block javascript %}
+    <!-- Include JavaScript files here -->
+    {% endblock %}
+</body>
+</html>
