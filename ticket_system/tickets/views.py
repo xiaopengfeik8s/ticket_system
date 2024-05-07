@@ -12,7 +12,6 @@ from django.views.generic import View
 from django.shortcuts import get_object_or_404, redirect
 import sys
 
-
 def ticket_list(request):
     tickets = Ticket.objects.all()
     return render(request, 'tickets/ticket_list.html', {'tickets': tickets})
@@ -50,10 +49,6 @@ def ticket_delete(request, pk):
     ticket = get_object_or_404(Ticket, pk=pk)
     ticket.delete()
     return redirect('ticket_list')
-
-
-
-   
 
 @login_required
 def ticket_status_update(request, pk, status):
