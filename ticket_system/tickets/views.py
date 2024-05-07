@@ -21,6 +21,8 @@ from django.db.models import Count
 from django.db.models import Count, F, Avg, DurationField, ExpressionWrapper
 import json
 from django.http import JsonResponse
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 @login_required
 def ticket_list(request):
@@ -161,9 +163,9 @@ def dashboard(request):
     }
     return render(request, 'tickets/dashboard.html', context)
 
-@login_required
+@require_POST
 def ticket_comment(request, pk):
-    if request.method == 'POST' and request.is_ajax():
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         comment_form = CommentForm(request.POST)
         if comment_form.is_valid():
             comment = comment_form.save(commit=False)

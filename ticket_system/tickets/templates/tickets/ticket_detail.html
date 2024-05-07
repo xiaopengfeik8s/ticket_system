@@ -10,6 +10,7 @@
           method: 'POST',
           headers: {
             'X-CSRFToken': formData.get('csrfmiddlewaretoken'),  // 从表单中获取CSRF token
+            'X-Requested-With': 'XMLHttpRequest',
           },
           body: formData
         })
@@ -45,17 +46,18 @@
 <p><strong>标签:</strong> {{ ticket.labels }}</p>
 <p><strong>创建时间:</strong> {{ ticket.created_at }}</p>
 <p><strong>更新时间:</strong> {{ ticket.updated_at }}</p>
-{% for comment in comments %}
-    <div class="comment">
-        <p>{{ comment.author }} said: {{ comment.text }}</p>
-    </div>
-{% endfor %}
-
-<form method="post">
+<form id="comment-form" method="post" action="{% url 'ticket_comment' ticket.pk %}"> <!-- Make sure the action URL is correct -->
     {% csrf_token %}
     {{ comment_form.as_p }}
     <button type="submit">添加评论</button>
 </form>
+<div id="comments-container">
+    {% for comment in comments %}
+        <div class="comment">
+            <p>{{ comment.author }} said: {{ comment.text }}</p>
+        </div>
+    {% endfor %}
+</div>
 <a href="{% url 'ticket_edit' pk=ticket.pk %}">编辑</a> 
 <a href="{% url 'ticket_delete' pk=ticket.pk %}">删除</a>
 <a href="{% url 'ticket_archive' pk=ticket.pk %}">归档工单</a>
