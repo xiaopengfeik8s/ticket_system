@@ -15,6 +15,7 @@ import sys
 from django.core.paginator import Paginator
 from .forms import CommentForm
 from django.contrib.auth.models import User
+from .forms import CommentForm
 
 @login_required
 def ticket_list(request):
@@ -55,11 +56,31 @@ def ticket_detail(request, pk):
     else:
         comment_form = CommentForm()
 
+
+    # 这里处理评论的提交
+    if request.method == 'POST':
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            # 创建并保存新的评论
+            new_comment = comment_form.save(commit=False)
+            new_comment.ticket = Ticket.objects.get(pk=pk)
+            new_comment.author = request.user  # 确保 request.user 是当前登录用户
+            new_comment.save()
+            # 重定向回工单详情页面
+            return redirect('ticket_detail', pk=pk)
+    else:
+        comment_form = CommentForm()
+
+    # 将评论表单传递给模板
     return render(request, 'tickets/ticket_detail.html', {
-        'ticket': ticket,
+        'ticket': Ticket.objects.get(pk=pk),
         'comment_form': comment_form,
-        'comments': ticket.comments.all()
+        'comments': Comment.objects.filter(ticket__pk=pk),
+        # ... 其他上下文 ...
     })
+
+
+
 
 @login_required
 def ticket_create(request):

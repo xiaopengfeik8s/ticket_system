@@ -44,3 +44,10 @@ class Comment(models.Model):
     
     class Meta:
         ordering = ['created_date']  # 根据创建时间排序
+
+    def update_comment(self, new_text):
+        self.text = new_text
+        self.save()
+
+    def delete_comment(self):
+        self.delete()
