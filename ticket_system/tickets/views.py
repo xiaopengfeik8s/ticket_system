@@ -17,6 +17,15 @@ from .forms import CommentForm
 
 @login_required
 def ticket_list(request):
+    status_query = request.GET.get('status')
+    assigned_query = request.GET.get('assigned_to')
+    
+    tickets = Ticket.objects.all()
+    if status_query:
+        tickets = tickets.filter(status=status_query)
+    if assigned_query:
+        tickets = tickets.filter(assigned_to=User.objects.get(username=assigned_query))
+
     tickets_list = Ticket.objects.all()
     paginator = Paginator(tickets_list, 10)  # 每页显示10个工单
 

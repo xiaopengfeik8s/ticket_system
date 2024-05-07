@@ -1,5 +1,15 @@
 <!-- tickets/templates/tickets/ticket_list.html -->
 <h1>工单列表</h1>
+<form method="get">
+    <select name="status">
+        <option value="">All</option>
+        <option value="new">New</option>
+        <option value="in_progress">In Progress</option>
+        <!-- 其他状态选项... -->
+    </select>
+    <input type="text" name="assigned_to" placeholder="负责人用户名">
+    <button type="submit">筛选</button>
+</form>
 <table>
     <tr>
         <th>Title</th>
