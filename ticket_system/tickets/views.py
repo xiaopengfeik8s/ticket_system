@@ -15,6 +15,11 @@ import sys
 def ticket_list(request):
     tickets = Ticket.objects.all()
     return render(request, 'tickets/ticket_list.html', {'tickets': tickets})
+    
+@login_required
+def ticket_detail(request, pk):
+    ticket = get_object_or_404(Ticket, pk=pk)
+    return render(request, 'tickets/ticket_detail.html', {'ticket': ticket})
 
 @login_required
 def ticket_create(request):
