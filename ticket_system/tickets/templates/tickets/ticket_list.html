@@ -1,5 +1,9 @@
 <!-- tickets/templates/tickets/ticket_list.html -->
 <h1>工单列表</h1>
+<form method="get" action="{% url 'ticket_list' %}">
+    <input type="text" name="search" placeholder="搜索工单..." value="{{ request.GET.search }}">
+    <button type="submit">搜索</button>
+</form>
 <form method="get">
     <select name="status">
         <option value="">选择状态...</option>

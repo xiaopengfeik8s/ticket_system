@@ -23,15 +23,24 @@ import json
 from django.http import JsonResponse
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+from django.db.models import Q
 
 @login_required
 def ticket_list(request):
     status_query = request.GET.get('status')
     assigned_query = request.GET.get('assigned_to')
     archived_query = request.GET.get('archived')
+    search_query = request.GET.get('search', '')
     
     tickets = Ticket.objects.all()
-    
+    if search_query:
+        tickets = tickets.filter(
+            Q(title__icontains=search_query) |
+            Q(description__icontains=search_query) |
+            Q(assigned_to__username__icontains=search_query) |
+            Q(status__icontains=search_query)
+        )
+
     if status_query:
         tickets = tickets.filter(status=status_query)
     if assigned_query:
